@@ -3,8 +3,10 @@ import supabase from "../../utils/supabase";
 
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
+import { useBoard } from "../../context/BoardContext";
 
-function ListComp({ posts }) {
+function ListComp() {
+  const { posts } = useBoard();
   if (!posts.length) {
     return <p>게시물이 없습니다.</p>;
   }
