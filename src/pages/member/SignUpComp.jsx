@@ -8,6 +8,9 @@ function SignUpComp() {
     useremail: "",
     userpwd: "",
     userpwd1: "",
+    name: "",
+    phone: "",
+    text: "",
   });
 
   const [errorM, setErrorM] = useState("");
@@ -63,17 +66,37 @@ function SignUpComp() {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: formData.useremail,
       password: formData.userpwd,
     });
 
-    if (!error) {
-      toast("회원가입완료");
+    console.log(data);
 
-      setLoading(false);
+    if (!error) {
+      console.log(data.user.id);
+      const { error } = await supabase
+        .from("user_table")
+        .insert([
+          {
+            id: data.user.id,
+            name: formData.name,
+            phone: formData.phone,
+            text: formData.text,
+          },
+        ])
+        .select();
+
+      if (!error) {
+        toast("회원가입완료");
+        setLoading(false);
+        navigate("/");
+      } else {
+        toast("회원가입실패(USER)");
+        setLoading(false);
+      }
     } else {
-      toast("회원가입실패");
+      toast("회원가입실패(AUTH)");
       setLoading(false);
     }
   };
@@ -128,6 +151,52 @@ function SignUpComp() {
               id="pwd1"
               placeholder="비밀번호를 확인하세요.(6자이상)"
               name="userpwd1"
+              onChange={eventHandler}
+              required
+              disabled={loading}
+            />
+          </div>
+          <hr />
+          <div>
+            <label htmlFor="name" className="label-control my-2">
+              이름 {formData.name}
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              name="name"
+              id="name"
+              placeholder="이름을 입력하세요."
+              onChange={eventHandler}
+              required
+              disabled={loading}
+            />
+          </div>
+          <div>
+            <label htmlFor="phone" className="label-control my-2">
+              전화번호 {formData.phone}
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              name="phone"
+              id="phone"
+              placeholder="핸드폰번호를 입력하세요."
+              onChange={eventHandler}
+              required
+              disabled={loading}
+            />
+          </div>
+          <div>
+            <label htmlFor="text" className="label-control my-2">
+              자기소개 {formData.text}
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              name="text"
+              id="text"
+              placeholder="간단자기소개를 입력하세요."
               onChange={eventHandler}
               required
               disabled={loading}
