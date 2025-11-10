@@ -10,7 +10,7 @@ import { useUser } from "./context/UserContext";
 
 function App() {
   // const text = useUser();
-  const { signUp, text } = useUser();
+  const { signUp, text, user, signOut } = useUser();
   return (
     <BrowserRouter>
       <div className="container d-flex justify-content-between">
@@ -39,14 +39,37 @@ function App() {
               board
             </NavLink>
           </li>
-          <li className="d-flex align-items-center">
+          {/* <li className="d-flex align-items-center">
             <NavLink to="/member" className="nav-link">
               member
             </NavLink>
-          </li>
-          <li className="d-flex align-items-center">
-            <Link className="nav-link">로그아웃</Link>
-          </li>
+          </li> */}
+
+          {user && (
+            <>
+              <li className="d-flex align-items-center gap-3">
+                <span>{user?.name}님 안녕하세요!!!</span>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={async () => {
+                    await signOut();
+                  }}
+                >
+                  로그아웃
+                </button>
+              </li>
+            </>
+          )}
+
+          {!user && (
+            <>
+              <li className="d-flex align-items-center">
+                <Link className="nav-link" to="/member/signin">
+                  로그인
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </div>
       <Routes>
@@ -61,6 +84,7 @@ function App() {
           ratione?
         </div>
       </div>
+      {JSON.stringify(user)}
       <ToastContainer
         position="bottom-center"
         autoClose={4000}
