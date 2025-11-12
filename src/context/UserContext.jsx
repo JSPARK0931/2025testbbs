@@ -34,6 +34,7 @@ export const UserProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    let mounted = true;
     console.log("Session 준비===========================");
     const loadUser = async () => {
       const { data } = await supabase.auth.getSession();
@@ -42,16 +43,36 @@ export const UserProvider = ({ children }) => {
       // data.session 값이 없으면 null값 setting
       const session = data?.session ?? null;
       console.log(session?.user ?? null);
-      console.log(session?.user.id);
+      console.log("session.user.id :" + session?.user.id);
       // setUser(session?.user ?? null);
       if (session?.user) {
         const extra = await fetchUserInfo(session?.user.id);
         setUser({ ...session.user, ...extra });
       }
+
+      const { data: sub } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          if (!mounted) return;
+
+          if (session?.user) {
+            const extra = await fetchUserInfo(session?.user.id);
+            setUser({ ...session.user, ...extra });
+          } else {
+            setUser(null);
+          }
+        }
+      );
+
+      // useEffect의 event성을 정지시킬때 return 사용
+      return () => {
+        mounted = false;
+        sub?.subscription?.unsubscribe?.();
+      };
     };
     loadUser();
-  }, [loading]);
+  }, []);
 
+  // SignUp : 회원가입
   const signUp = async (email, password, name, phone, text) => {
     //alert("test");
     console.log("[userProvider] SignUp Start====>");
@@ -86,8 +107,11 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  //SignIn : 로그인
   const signIn = async (email, password) => {
     console.log("[userProvider] SignIn Start====>");
+    //로그인 성공시 signInWithPassword에서 local storage에 key 자동저장 data, 에러시 error
+    // cf) spring에서는 key값을 JWT 이용 localstorage에 저장하는 flow필요
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
