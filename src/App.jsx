@@ -8,6 +8,7 @@ import MemberComp from "./pages/member/MemberComp";
 import { ToastContainer } from "react-toastify";
 import { useUser } from "./context/UserContext";
 import MenuComp from "./components/MenuComp";
+import IBoardComp from "./pages/imageboard/IBoardComp";
 
 function App() {
   // const text = useUser();
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<HomeComp />}></Route>
         <Route path="/about/*" element={<AboutComp />}></Route>
         <Route path="/board/*" element={<BoardComp />}></Route>
+        <Route path="/iboard/*" element={<IBoardComp />}></Route>
         <Route path="/member/*" element={<MemberComp />}></Route>
       </Routes>
       <div className="container-fluid py-5 mt-5" style={{ background: "#ddd" }}>
