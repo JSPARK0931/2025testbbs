@@ -14,27 +14,36 @@ function IListComp() {
   return (
     <div>
       <h3>이미지 리스트</h3>
-      {imageBbs.map((item, i) => {
-        return (
-          <ul key={i}>
-            <p scope="row">{imageBbs.length - i}</p>
-            <p>{item.fileurl}</p>
-            <p>
-              <img src={item.fileurl} />
-            </p>
+      <div className="iboardList shadow">
+        {imageBbs.map((item, i) => {
+          return (
+            <>
+              <div key={i} className="mb-5 shadow">
+                <Link to={`/iboard/view/${item.id}`} className="nav-link">
+                  <p>
+                    <img
+                      src={
+                        item.fileurl
+                          ? item.fileurl
+                          : "https://jthyftgxlnafhkrcasyl.supabase.co/storage/v1/object/public/images/no-img-icon-p.png"
+                      }
+                      width={200}
+                      height={200}
+                    />
+                  </p>
+                  {/* <p>{item.filename}</p> */}
+                  <p>
+                    {item.id}. 글제목 : {item.title}
+                  </p>
 
-            <p>{item.filename}</p>
-            <li>
-              <Link to={`/iboard/view/${item.id}`} className="nav-link">
-                {item.title}
-              </Link>
-            </li>
-
-            <p>{item.name}</p>
-            <p>{dayjs(item.created_at).format("YY.MM.DD")}</p>
-          </ul>
-        );
-      })}
+                  {/* <p>{item.name}</p> */}
+                  {/* <p>{dayjs(item.created_at).format("YY.MM.DD")}</p> */}
+                </Link>
+              </div>
+            </>
+          );
+        })}
+      </div>
     </div>
   );
 }

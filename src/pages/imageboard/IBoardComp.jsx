@@ -3,6 +3,7 @@ import IListComp from "./IListComp";
 import IWriteComp from "./IWriteComp";
 import { Link, Route, Routes } from "react-router-dom";
 import { IBoardProvider } from "../../context/IBoardContext";
+import IViewComp from "./IViewComp";
 
 function IBoardComp() {
   return (
@@ -27,6 +28,7 @@ function IBoardComp() {
           <Route index element={<IListComp />}></Route>
           <Route path="list" element={<IListComp />}></Route>
           <Route path="write" element={<IWriteComp />}></Route>
+          <Route path="view/:id" element={<IViewComp />}></Route>
         </Routes>
       </div>
     </IBoardProvider>

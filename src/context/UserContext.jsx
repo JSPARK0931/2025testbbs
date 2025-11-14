@@ -5,9 +5,9 @@ import supabase from "../utils/supabase";
 const UserContext = createContext();
 
 export const useUser = () => {
-  console.log("[useUser] Start====>");
+  // console.log("[useUser] Start====>");
   const context = useContext(UserContext);
-  console.log(context);
+  // console.log(context);
   if (!context) {
     throw new Error("userProvider 내부에 있어야 합니다.");
   }
@@ -16,7 +16,7 @@ export const useUser = () => {
 };
 
 export const UserProvider = ({ children }) => {
-  console.log("[userProvider] Start====>");
+  // console.log("[userProvider] Start====>");
   //const [text, setText] = useState("안녕하세요");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
@@ -35,14 +35,14 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     let mounted = true;
-    console.log("Session 준비===========================");
+    // console.log("Session 준비===========================");
     const loadUser = async () => {
       const { data } = await supabase.auth.getSession();
-      console.log(data.session);
+      // console.log(data.session);
 
       // data.session 값이 없으면 null값 setting
       const session = data?.session ?? null;
-      console.log(session?.user ?? null);
+      // console.log(session?.user ?? null);
       console.log("session.user.id :" + session?.user.id);
       // setUser(session?.user ?? null);
       if (session?.user) {
@@ -75,7 +75,7 @@ export const UserProvider = ({ children }) => {
   // SignUp : 회원가입
   const signUp = async (email, password, name, phone, text) => {
     //alert("test");
-    console.log("[userProvider] SignUp Start====>");
+    // console.log("[userProvider] SignUp Start====>");
     const { data, error } = await supabase.auth.signUp({
       email: email,
       password: password,
@@ -84,7 +84,7 @@ export const UserProvider = ({ children }) => {
     //    if (error) throw error;
 
     if (!error) {
-      console.log(data.user.id);
+      // console.log(data.user.id);
       const { error: userError } = await supabase
         .from("user_table")
         .insert([
@@ -109,7 +109,7 @@ export const UserProvider = ({ children }) => {
 
   //SignIn : 로그인
   const signIn = async (email, password) => {
-    console.log("[userProvider] SignIn Start====>");
+    // console.log("[userProvider] SignIn Start====>");
     //로그인 성공시 signInWithPassword에서 local storage에 key 자동저장 data, 에러시 error
     // cf) spring에서는 key값을 JWT 이용 localstorage에 저장하는 flow필요
     const { data, error } = await supabase.auth.signInWithPassword({
