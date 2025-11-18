@@ -6,7 +6,29 @@ import { Link } from "react-router-dom";
 import { useBoard } from "../../context/BoardContext";
 
 function ListComp() {
-  const { posts } = useBoard();
+  const { posts, totalCount, getPostsWithPagination } = useBoard();
+  console.log("전체자료" + totalCount);
+
+  //페이지네이션 변수
+  const [page, setPage] = useState(1);
+  const size = 10;
+  const pagerCnt = 10;
+
+  //페이지네이션 계산
+  const totalPage = Math.ceil(totalCount / size);
+  const startPage = Math.floor((page - 1) / pagerCnt) * pagerCnt + 1;
+  const endPage = Math.min(startPage + pagerCnt - 1, totalPage);
+
+  //페이지네이션 번호 배열생성
+  const pageNumbers = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
+
+  useEffect(() => {
+    getPostsWithPagination(page, size);
+  }, [page]);
+
   if (!posts.length) {
     return <p>게시물이 없습니다.</p>;
   }
@@ -29,7 +51,7 @@ function ListComp() {
           </tr>
         </thead>
         <tbody>
-          {posts.map((item, i) => {
+          {posts?.map((item, i) => {
             return (
               <tr key={i}>
                 <th scope="row">{posts.length - i}</th>
@@ -54,7 +76,57 @@ function ListComp() {
           </li>
         ))}
       </ul> */}
-
+      {/* 페이지네이션 */}
+      <div> 페이지정보</div>
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
+        <div className="mb3">
+          총 {totalCount} 개 / {page} 페이지 / 총 {totalPage} 페이지
+        </div>
+        <div>
+          <ul className="pagination">
+            <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => {
+                  setPage((prev) => Math.max(prev - 1, 1));
+                }}
+                disabled={page === 1}
+              >
+                이전
+              </button>
+            </li>
+            {/* 페이지네이션 bootstrap 디자인 */}
+            {pageNumbers.map((item, i) => {
+              return (
+                <li
+                  key={i}
+                  className={`page-item ${item == page ? "active" : ""}`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => {
+                      setPage(item);
+                    }}
+                  >
+                    {item}
+                  </button>
+                </li>
+              );
+            })}
+            <li className={`page-item ${page === totalPage ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => {
+                  // setPage(page + 1);
+                  setPage((prev) => Math.min(page + 1, totalPage));
+                }}
+              >
+                다음
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
       <div className="d-flex justify-content-end">
         <div className="d-flex gap-2">
           <Link to="/board/write" className="btn btn-primary">
@@ -62,6 +134,7 @@ function ListComp() {
           </Link>
         </div>
       </div>
+      <div>{JSON.stringify(posts)}</div>
     </div>
   );
 }
